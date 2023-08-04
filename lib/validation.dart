@@ -26,7 +26,7 @@ String? validateExpenseCategory(String? value) {
       return 'Only two digits after the decimal point are allowed';
     }
 
-    if (!numericRegex.hasMatch(value)) {
+    if (AppConsts.numericRegex.hasMatch(value)) {
       return 'Invalid amount format';
     }
 
