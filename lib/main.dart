@@ -1,4 +1,4 @@
-import 'package:expense_tracker/color_schemes.g.dart';
+import 'package:expense_tracker/color_schemes.dart';
 import 'package:expense_tracker/objectbox_store.dart';
 import 'package:expense_tracker/root_page/root_page.dart';
 import 'package:flutter/material.dart';

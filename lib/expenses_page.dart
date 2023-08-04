@@ -1,6 +1,6 @@
+import 'package:expense_tracker/date_range_cubit.dart';
 import 'package:expense_tracker/expense_category.dart';
-import 'package:expense_tracker/filter_by_date/bloc/date_range_cubit.dart';
-import 'package:expense_tracker/filter_by_date/filter_by_date.dart';
+import 'package:expense_tracker/filter_by_date.dart';
 import 'package:expense_tracker/main.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -23,52 +23,19 @@ class _ExpensesPage extends StatelessWidget {
 
   final expensesSum = <String, double>{};
 
-  PieChart buildPieChart(Map<String, double> dataMap) {
-    var totalValue = 0.0;
-    for (final value in dataMap.values) {
-      totalValue += value;
-    }
-
-    return PieChart(
-      PieChartData(
-        centerSpaceRadius: 0,
-        sections: dataMap.entries
-            .map(
-              (entry) => PieChartSectionData(
-                value: entry.value,
-                title:
-                    '${((entry.value / totalValue) * 100).toStringAsFixed(0)}%',
-                badgeWidget: _Badge(
-                  expense: ExpenseCategory.getValues(entry.key),
-                ),
-                badgePositionPercentageOffset: .98,
-                color: ExpenseCategory.getColor(entry.key),
-                radius: 120,
-                titleStyle: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-            )
-            .toList(),
-        // Other configurations for the PieChart can be added here
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DateRangeCubit, DateRangeState>(
       builder: (context, state) {
+        final cubit = context.read<DateRangeCubit>();
         return Scaffold(
           body: StreamBuilder(
             stream: state.selectedDateRange == null
-                      ? objectbox.getAllTransactions()
-                      : objectbox.getTransactionsByDate(
-                          state.selectedDateRange!.start,
-                          state.selectedDateRange!.end,
-                        ),
+                ? objectbox.getAllTransactions()
+                : objectbox.getTransactionsByDate(
+                    state.selectedDateRange!.start,
+                    state.selectedDateRange!.end,
+                  ),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 for (final expenseCategory in ExpenseCategory.values) {
@@ -85,8 +52,8 @@ class _ExpensesPage extends StatelessWidget {
                 return Column(
                   children: [
                     const SizedBox(height: 35),
-                    Expanded(child: buildPieChart(expensesSum)),
-                    filterByDate(context),
+                    Expanded(child: BuildPieChart(dataMap: expensesSum)),
+                    FilterByDate(cubit: cubit),
                     Expanded(
                       child: ListView.builder(
                         shrinkWrap: true,
@@ -124,6 +91,50 @@ class _ExpensesPage extends StatelessWidget {
   }
 }
 
+class BuildPieChart extends StatelessWidget {
+  const BuildPieChart({
+    required this.dataMap,
+    super.key,
+  });
+
+  final Map<String, double> dataMap;
+
+  @override
+  Widget build(BuildContext context) {
+    final totalValue = dataMap.values.reduce((a, b) => a + b);
+
+    return PieChart(
+      PieChartData(
+        centerSpaceRadius: 0,
+        sections: dataMap.entries
+            .map(
+              (entry) => chartSections(entry, totalValue),
+            )
+            .toList(),
+      ),
+    );
+  }
+
+  PieChartSectionData chartSections(
+      MapEntry<String, double> entry, double totalValue) {
+    return PieChartSectionData(
+      value: entry.value,
+      title: '${((entry.value / totalValue) * 100).toStringAsFixed(0)}%',
+      badgeWidget: _Badge(
+        expense: ExpenseCategory.getValues(entry.key),
+      ),
+      badgePositionPercentageOffset: .98,
+      color: ExpenseCategory.getColor(entry.key),
+      radius: 120,
+      titleStyle: const TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
+      ),
+    );
+  }
+}
+
 class _Badge extends StatelessWidget {
   const _Badge({
     required this.expense,
@@ -143,7 +154,7 @@ class _Badge extends StatelessWidget {
           color: expense.color,
           width: 2,
         ),
-        boxShadow: <BoxShadow>[
+        boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(.5),
             offset: const Offset(3, 3),
@@ -152,7 +163,10 @@ class _Badge extends StatelessWidget {
         ],
       ),
       child: Center(
-        child: Icon(expense.icon, color: Colors.black,),
+        child: Icon(
+          expense.icon,
+          color: Colors.black,
+        ),
       ),
     );
   }

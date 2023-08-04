@@ -4,6 +4,7 @@ import 'package:expense_tracker/add_edit_transaction_page/bloc/add_transaction_c
 import 'package:expense_tracker/add_edit_transaction_page/choice_chips.dart';
 import 'package:expense_tracker/expense_category.dart';
 import 'package:expense_tracker/main.dart';
+import 'package:expense_tracker/validation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -59,7 +60,8 @@ class _AddTransactionPage extends StatelessWidget {
         }
 
         return Scaffold(
-          appBar: AppBar(centerTitle: true,
+          appBar: AppBar(
+            centerTitle: true,
             title: const Text('Add Transaction'),
           ),
           body: Padding(
@@ -80,15 +82,7 @@ class _AddTransactionPage extends StatelessWidget {
                     onSaved: (value) {
                       title = value!;
                     },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a title';
-                      }
-                      if (value.length > 40) {
-                        return "Title can't be longer than 40 characters";
-                      }
-                      return null;
-                    },
+                    validator: validateTitle,
                   ),
                   const SizedBox(
                     height: 12,
@@ -119,23 +113,7 @@ class _AddTransactionPage extends StatelessWidget {
                     onSaved: (value) {
                       amount = double.parse(value!);
                     },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter an amount';
-                      }
-
-                      if (value.contains('.') &&
-                          value.split('.')[1].length > 2) {
-                        return 'Only two digits after the decimal point are allowed';
-                      }
-
-                      final numericRegex = RegExp(r'^\d+(\.\d{1,2})?$');
-                      if (!numericRegex.hasMatch(value)) {
-                        return 'Invalid amount format';
-                      }
-
-                      return null;
-                    },
+                    validator: validateAmount,
                   ),
                   const SizedBox(
                     height: 12,
@@ -158,12 +136,7 @@ class _AddTransactionPage extends StatelessWidget {
                       ),
                       isExpanded: true,
                       onChanged: cubit.setExpenseCategory,
-                      validator: (value) {
-                        if (value == null) {
-                          return 'Please select an expense category';
-                        }
-                        return null;
-                      },
+                      validator: validateExpenseCategory,
                       onSaved: cubit.setExpenseCategory,
                       items: ExpenseCategory.values.map((e) {
                         return DropdownMenuItem(

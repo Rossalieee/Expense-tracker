@@ -24,7 +24,7 @@ class _RootPage extends StatelessWidget {
 
   final List<Widget> pages = [
     const HomePage(),
-    const ExpensesPage(),
+    ExpensesPage(),
     const AddTransactionPage(),
     const GoalsPage(),
     const SettingsPage()

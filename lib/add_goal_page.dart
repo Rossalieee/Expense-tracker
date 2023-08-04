@@ -1,9 +1,37 @@
+import 'package:expense_tracker/app_consts.dart';
 import 'package:expense_tracker/main.dart';
+import 'package:expense_tracker/validation.dart';
 import 'package:flutter/material.dart';
 
-class AddGoalPage extends StatelessWidget {
+class AddGoalPage extends StatefulWidget {
   const AddGoalPage({super.key});
 
+  @override
+  State<AddGoalPage> createState() => _AddGoalPageState();
+}
+
+double _goalAmount = 0;
+double _collectedAmount = 0;
+String _goalDescription = '';
+bool _isFinished = false;
+final _formKey = GlobalKey<FormState>();
+
+void submitForm() {
+  if (_formKey.currentState!.validate()) {
+    _formKey.currentState!.save();
+
+    objectbox.addGoal(
+      description: _goalDescription,
+      goalAmount: _goalAmount,
+      collectedAmount: _collectedAmount,
+      isFinished: _isFinished,
+    );
+
+    _formKey.currentState!.reset();
+  }
+}
+
+class _AddGoalPageState extends State<AddGoalPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,12 +49,7 @@ class AddGoalPage extends StatelessWidget {
                   border: OutlineInputBorder(),
                   labelText: 'Goal Description',
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a goal description';
-                  }
-                  return null;
-                },
+                validator: validateDescription,
                 onSaved: (newValue) {
                   _goalDescription = newValue!;
                 },
@@ -43,22 +66,7 @@ class AddGoalPage extends StatelessWidget {
                   border: OutlineInputBorder(),
                   labelText: 'Goal Amount',
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an amount';
-                  }
-
-                  if (value.contains('.') && value.split('.')[1].length > 2) {
-                    return 'Only two digits after the decimal point are allowed';
-                  }
-
-                  final numericRegex = RegExp(r'^\d+(\.\d{1,2})?$');
-                  if (!numericRegex.hasMatch(value)) {
-                    return 'Invalid amount format';
-                  }
-
-                  return null;
-                },
+                validator: validateAmount,
                 onSaved: (newValue) {
                   _goalAmount = double.parse(newValue!);
                 },
@@ -79,26 +87,7 @@ class AddGoalPage extends StatelessWidget {
                   border: OutlineInputBorder(),
                   labelText: 'Collected Amount',
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an amount';
-                  }
-
-                  if (value.contains('.') && value.split('.')[1].length > 2) {
-                    return 'Only two digits after the decimal point are allowed';
-                  }
-
-                  final numericRegex = RegExp(r'^\d+(\.\d{1,2})?$');
-                  if (!numericRegex.hasMatch(value)) {
-                    return 'Invalid amount format';
-                  }
-
-                  if (double.parse(value) > _goalAmount) {
-                    return 'Collected amount cannot be greater than goal amount';
-                  }
-
-                  return null;
-                },
+                validator: validateCollectedAmount,
                 onSaved: (newValue) {
                   _collectedAmount = double.parse(newValue!);
                   if (_collectedAmount == _goalAmount) {
@@ -121,25 +110,31 @@ class AddGoalPage extends StatelessWidget {
       ),
     );
   }
-}
 
-double _goalAmount = 0;
-double _collectedAmount = 0;
-String _goalDescription = '';
-bool _isFinished = false;
-final _formKey = GlobalKey<FormState>();
+  String? validateDescription(String? value) {
+    if (value?.isEmpty ?? true) {
+      return 'Please enter a goal description';
+    }
+    return null;
+  }
 
-void submitForm() {
-  if (_formKey.currentState!.validate()) {
-    _formKey.currentState!.save();
+  String? validateCollectedAmount(String? value) {
+    if (value?.isEmpty ?? true) {
+      return 'Please enter an amount';
+    }
 
-    objectbox.addGoal(
-      description: _goalDescription,
-      goalAmount: _goalAmount,
-      collectedAmount: _collectedAmount,
-      isFinished: _isFinished,
-    );
+    if (value!.contains('.') && value.split('.')[1].length > 2) {
+      return 'Only two digits after the decimal point are allowed';
+    }
 
-    _formKey.currentState!.reset();
+    if (!numericRegex.hasMatch(value)) {
+      return 'Invalid amount format';
+    }
+
+    if (double.parse(value) > _goalAmount) {
+      return 'Collected amount cannot be greater than goal amount';
+    }
+
+    return null;
   }
 }

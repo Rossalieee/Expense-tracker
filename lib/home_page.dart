@@ -1,6 +1,6 @@
 import 'package:expense_tracker/expense_category.dart';
-import 'package:expense_tracker/filter_by_date/bloc/date_range_cubit.dart';
-import 'package:expense_tracker/filter_by_date/filter_by_date.dart';
+import 'package:expense_tracker/date_range_cubit.dart';
+import 'package:expense_tracker/filter_by_date.dart';
 import 'package:expense_tracker/main.dart';
 import 'package:expense_tracker/settings_page.dart';
 import 'package:expense_tracker/transaction_details_page.dart';
@@ -28,6 +28,7 @@ class _HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<DateRangeCubit, DateRangeState>(
       builder: (context, state) {
+        final cubit = context.read<DateRangeCubit>();
         return Scaffold(
           body: Column(
             children: [
@@ -66,7 +67,7 @@ class _HomePage extends StatelessWidget {
                               ),
                             ),
                           ),
-                          filterByDate(context),
+                          FilterByDate(cubit: cubit),
                           Expanded(
                             child: ListView.builder(
                               shrinkWrap: true,

@@ -1,5 +1,5 @@
-import 'package:expense_tracker/color_schemes.g.dart';
 import 'package:expense_tracker/add_goal_page.dart';
+import 'package:expense_tracker/color_schemes.dart';
 import 'package:expense_tracker/main.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
