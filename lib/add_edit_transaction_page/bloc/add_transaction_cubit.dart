@@ -36,7 +36,11 @@ class AddTransactionCubit extends Cubit<AddTransactionState> {
       : super(
           AddTransactionState(
             selectedIndex: 0,
-            date: DateTime.now(),
+            date: DateTime(
+              DateTime.now().year,
+              DateTime.now().month,
+              DateTime.now().day,
+            ),
             isIncome: true,
           ),
         );
