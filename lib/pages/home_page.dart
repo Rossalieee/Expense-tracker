@@ -1,9 +1,10 @@
-import 'package:expense_tracker/expense_category.dart';
+import 'package:expense_tracker/app_spacers.dart';
 import 'package:expense_tracker/date_range_cubit.dart';
+import 'package:expense_tracker/expense_category.dart';
 import 'package:expense_tracker/filter_by_date.dart';
 import 'package:expense_tracker/main.dart';
-import 'package:expense_tracker/settings_page.dart';
-import 'package:expense_tracker/transaction_details_page.dart';
+import 'package:expense_tracker/pages/settings_page.dart';
+import 'package:expense_tracker/pages/transaction_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -32,7 +33,7 @@ class _HomePage extends StatelessWidget {
         return Scaffold(
           body: Column(
             children: [
-              const SizedBox(height: 35),
+              AppSpacers.h35,
               Expanded(
                 child: StreamBuilder(
                   stream: state.selectedDateRange == null
@@ -125,8 +126,7 @@ class _HomePage extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                    onTap: () {
-                                      Navigator.of(context).push(
+                                    onTap: () => Navigator.of(context).push(
                                         MaterialPageRoute<dynamic>(
                                           builder: (BuildContext context) {
                                             return TransactionDetailsPage(
@@ -134,8 +134,7 @@ class _HomePage extends StatelessWidget {
                                             );
                                           },
                                         ),
-                                      );
-                                    },
+                                      ),
                                   ),
                                 );
                               },

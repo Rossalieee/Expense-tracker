@@ -17,10 +17,10 @@ class TransactionModel {
   @Id()
   int id;
   String title;
-  String? description;
   double amount;
   DateTime date;
-  String? photo;
   bool isIncome;
+  String? photo;
+  String? description;
   String? expenseCategory;
 }

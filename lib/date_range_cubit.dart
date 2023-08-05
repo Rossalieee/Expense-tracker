@@ -5,6 +5,9 @@ class DateRangeState {
   DateRangeState({this.selectedDateRange});
 
   final DateTimeRange? selectedDateRange;
+
+  @override
+  String toString() => 'DateRangeState(selectedDateRange: $selectedDateRange)';
 }
 
 class DateRangeCubit extends Cubit<DateRangeState> {
@@ -16,7 +19,5 @@ class DateRangeCubit extends Cubit<DateRangeState> {
     }
   }
 
-  void clearDateRange() {
-    emit(DateRangeState());
-  }
+  void clearDateRange() => emit(DateRangeState());
 }

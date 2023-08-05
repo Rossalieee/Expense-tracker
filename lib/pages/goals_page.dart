@@ -1,6 +1,6 @@
-import 'package:expense_tracker/add_goal_page.dart';
 import 'package:expense_tracker/color_schemes.dart';
 import 'package:expense_tracker/main.dart';
+import 'package:expense_tracker/pages/add_goal_page.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
@@ -48,7 +48,8 @@ class GoalsPage extends StatelessWidget {
                   ),
                   onTap: () {
                     final controller = TextEditingController(
-                        text: goal.collectedAmount.toStringAsFixed(2));
+                      text: goal.collectedAmount.toStringAsFixed(2),
+                    );
 
                     showDialog<String>(
                       context: context,
@@ -58,7 +59,8 @@ class GoalsPage extends StatelessWidget {
                           content: TextField(
                             controller: controller,
                             keyboardType: const TextInputType.numberWithOptions(
-                                decimal: true),
+                              decimal: true,
+                            ),
                           ),
                           actions: <Widget>[
                             Row(
@@ -143,9 +145,8 @@ class GoalsPage extends StatelessWidget {
                                         child: const Text('Save'),
                                       ),
                                       TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
                                         child: const Text('Cancel'),
                                       ),
                                     ],

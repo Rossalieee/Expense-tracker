@@ -1,9 +1,10 @@
 import 'dart:io';
 
-import 'package:expense_tracker/add_edit_transaction_page/edit_transaction_page.dart';
+import 'package:expense_tracker/app_spacers.dart';
 import 'package:expense_tracker/main.dart';
 import 'package:expense_tracker/models/transaction.dart';
-import 'package:expense_tracker/settings_page.dart';
+import 'package:expense_tracker/pages/add_edit_transaction_page/edit_transaction_page.dart';
+import 'package:expense_tracker/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -25,8 +26,7 @@ class TransactionDetailsPage extends StatelessWidget {
         title: const Text('Transaction Details'),
         actions: [
           IconButton(
-            onPressed: () {
-              Navigator.of(context).push(
+            onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute<dynamic>(
                   builder: (BuildContext context) {
                     return EditTransactionPage(
@@ -34,8 +34,7 @@ class TransactionDetailsPage extends StatelessWidget {
                     );
                   },
                 ),
-              );
-            },
+              ),
             icon: const Icon(Icons.edit),
           ),
           IconButton(
@@ -86,7 +85,7 @@ class TransactionDetailsPage extends StatelessWidget {
                   color: Colors.grey[600],
                 ),
               ),
-              const SizedBox(height: 16),
+              AppSpacers.h15,
               Text(
                 '$formattedAmount $choosenCurrency',
                 style: TextStyle(
@@ -95,7 +94,7 @@ class TransactionDetailsPage extends StatelessWidget {
                   color: transaction.isIncome ? Colors.green : Colors.red,
                 ),
               ),
-              const SizedBox(height: 8),
+              AppSpacers.h8,
               Text(
                 transaction.description ?? 'No description',
                 style: TextStyle(
@@ -103,7 +102,7 @@ class TransactionDetailsPage extends StatelessWidget {
                   color: Colors.grey[600],
                 ),
               ),
-              const SizedBox(height: 16),
+              AppSpacers.h15,
               if (transaction.photo != null)
                 Container(
                   alignment: Alignment.center,
@@ -115,7 +114,7 @@ class TransactionDetailsPage extends StatelessWidget {
                     ),
                   ),
                 ),
-              const SizedBox(height: 8),
+              AppSpacers.h8,
             ],
           ),
         ),

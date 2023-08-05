@@ -1,10 +1,12 @@
 import 'dart:io';
 
-import 'package:expense_tracker/add_edit_transaction_page/bloc/add_transaction_cubit.dart';
-import 'package:expense_tracker/add_edit_transaction_page/choice_chips.dart';
+import 'package:expense_tracker/app_spacers.dart';
 import 'package:expense_tracker/expense_category.dart';
 import 'package:expense_tracker/main.dart';
 import 'package:expense_tracker/models/transaction.dart';
+import 'package:expense_tracker/pages/add_edit_transaction_page/add_transaction_state.dart';
+import 'package:expense_tracker/pages/add_edit_transaction_page/bloc/add_transaction_cubit.dart';
+import 'package:expense_tracker/pages/add_edit_transaction_page/choice_chips.dart';
 import 'package:expense_tracker/validation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,7 +37,7 @@ class _EditTransactionPage extends StatelessWidget {
     final formKey = GlobalKey<FormState>();
     final picker = ImagePicker();
 
-    var title = transaction.title;
+    final title = transaction.title;
     var description = transaction.description ?? '';
     var amount = transaction.amount;
 
@@ -46,7 +48,9 @@ class _EditTransactionPage extends StatelessWidget {
         context.read<AddTransactionCubit>().editTransaction(
               date: transaction.date,
               isIncome: transaction.isIncome,
-              selectedIndex: transaction.isIncome ? 0 : 1,
+              type: transaction.isIncome
+                  ? TransactionType.income
+                  : TransactionType.expense,
               photo: transaction.photo,
               expenseCategory: transaction.expenseCategory,
             );
@@ -55,7 +59,8 @@ class _EditTransactionPage extends StatelessWidget {
           if (formKey.currentState!.validate()) {
             formKey.currentState!.save();
 
-            objectbox.updateTransaction(transaction.id,
+            objectbox.updateTransaction(
+              transaction.id,
               title: title,
               description: description.isEmpty ? null : description,
               amount: amount,
@@ -81,9 +86,7 @@ class _EditTransactionPage extends StatelessWidget {
               key: formKey,
               child: ListView(
                 children: [
-                  const SizedBox(
-                    height: 5,
-                  ),
+                  AppSpacers.h5,
                   TextFormField(
                     initialValue: title,
                     decoration: const InputDecoration(
@@ -93,9 +96,7 @@ class _EditTransactionPage extends StatelessWidget {
                     ),
                     onSaved: validateTitle,
                   ),
-                  const SizedBox(
-                    height: 12,
-                  ),
+                  AppSpacers.h12,
                   TextFormField(
                     initialValue: description,
                     decoration: const InputDecoration(
@@ -103,13 +104,9 @@ class _EditTransactionPage extends StatelessWidget {
                       labelText: 'Description',
                       contentPadding: EdgeInsets.all(8),
                     ),
-                    onSaved: (value) {
-                      description = value!;
-                    },
+                    onSaved: (value) => description = value!,
                   ),
-                  const SizedBox(
-                    height: 12,
-                  ),
+                  AppSpacers.h12,
                   TextFormField(
                     initialValue: amount.toString(),
                     keyboardType: const TextInputType.numberWithOptions(
@@ -121,35 +118,23 @@ class _EditTransactionPage extends StatelessWidget {
                       labelText: 'Amount',
                       contentPadding: EdgeInsets.all(8),
                     ),
-                    onSaved: (value) {
-                      amount = double.parse(value!);
-                    },
+                    onSaved: (value) => amount = double.parse(value!),
                     validator: validateAmount,
                   ),
-                  const SizedBox(
-                    height: 12,
-                  ),
+                  AppSpacers.h12,
                   Center(
                     child: Wrap(
                       spacing: 6,
-                      children: choiceChips(
-                        context,
-                        state,
-                        transaction,
-                        edit: true,
-                      ),
+                      children: choiceChips(context, state, transaction,
+                          isEditTransactionPage: true),
                     ),
                   ),
-                  const SizedBox(
-                    height: 5,
-                  ),
+                  AppSpacers.h5,
                   Visibility(
-                    visible: cubit.state.selectedIndex == 1,
+                    visible: cubit.state.type == TransactionType.expense,
                     child: DropdownButtonFormField(
                       value: cubit.state.expenseCategory,
-                      hint: const Text(
-                        'Expense Category',
-                      ),
+                      hint: const Text('Expense Category'),
                       isExpanded: true,
                       onChanged: validateExpenseCategory,
                       onSaved: (value) {
@@ -162,9 +147,7 @@ class _EditTransactionPage extends StatelessWidget {
                           child: Row(
                             children: [
                               Icon(e.icon),
-                              const SizedBox(
-                                width: 10,
-                              ),
+                              AppSpacers.w10,
                               Text(e.name),
                             ],
                           ),
@@ -172,9 +155,7 @@ class _EditTransactionPage extends StatelessWidget {
                       }).toList(),
                     ),
                   ),
-                  const SizedBox(
-                    height: 15,
-                  ),
+                  AppSpacers.h15,
                   OutlinedButton(
                     onPressed: () {
                       picker.pickImage(source: ImageSource.gallery).then(
@@ -184,9 +165,7 @@ class _EditTransactionPage extends StatelessWidget {
                         },
                       );
                     },
-                    child: const Text(
-                      'Add photo',
-                    ),
+                    child: const Text('Add photo'),
                   ),
                   if (cubit.state.photo != null)
                     Stack(
@@ -212,7 +191,7 @@ class _EditTransactionPage extends StatelessWidget {
                       ],
                     )
                   else
-                    const SizedBox(height: 0),
+                    AppSpacers.h0,
                   ListTile(
                     leading: const Icon(Icons.calendar_today),
                     title: const Text('Transaction Date'),
@@ -229,9 +208,7 @@ class _EditTransactionPage extends StatelessWidget {
                       cubit.selectDate(value);
                     }),
                   ),
-                  const SizedBox(
-                    height: 15,
-                  ),
+                  AppSpacers.h15,
                   ElevatedButton(
                     onPressed: submitForm,
                     style: ElevatedButton.styleFrom(

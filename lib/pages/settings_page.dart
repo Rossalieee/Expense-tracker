@@ -1,4 +1,5 @@
 import 'package:currency_picker/currency_picker.dart';
+import 'package:expense_tracker/app_spacers.dart';
 import 'package:flutter/material.dart';
 
 String choosenCurrency = 'PLN';
@@ -11,9 +12,7 @@ class SettingsPage extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          const SizedBox(
-            height: 20,
-          ),
+          AppSpacers.h20,
           Padding(
             padding: const EdgeInsets.all(12),
             child: TextButton(

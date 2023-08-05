@@ -1,4 +1,5 @@
 import 'package:expense_tracker/app_consts.dart';
+import 'package:expense_tracker/app_spacers.dart';
 import 'package:expense_tracker/main.dart';
 import 'package:expense_tracker/validation.dart';
 import 'package:flutter/material.dart';
@@ -50,13 +51,9 @@ class _AddGoalPageState extends State<AddGoalPage> {
                   labelText: 'Goal Description',
                 ),
                 validator: validateDescription,
-                onSaved: (newValue) {
-                  _goalDescription = newValue!;
-                },
+                onSaved: (newValue) => _goalDescription = newValue!,
               ),
-              const SizedBox(
-                height: 15,
-              ),
+              AppSpacers.h15,
               TextFormField(
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
@@ -67,16 +64,10 @@ class _AddGoalPageState extends State<AddGoalPage> {
                   labelText: 'Goal Amount',
                 ),
                 validator: validateAmount,
-                onSaved: (newValue) {
-                  _goalAmount = double.parse(newValue!);
-                },
-                onChanged: (value) {
-                  _goalAmount = double.parse(value);
-                },
+                onSaved: (newValue) => _goalAmount = double.parse(newValue!),
+                onChanged: (value) => _goalAmount = double.parse(value),
               ),
-              const SizedBox(
-                height: 15,
-              ),
+              AppSpacers.h15,
               TextFormField(
                 initialValue: _collectedAmount.toString(),
                 keyboardType: const TextInputType.numberWithOptions(
@@ -97,9 +88,7 @@ class _AddGoalPageState extends State<AddGoalPage> {
                   }
                 },
               ),
-              const SizedBox(
-                height: 15,
-              ),
+              AppSpacers.h15,
               const ElevatedButton(
                 onPressed: submitForm,
                 child: Text('Add Goal'),

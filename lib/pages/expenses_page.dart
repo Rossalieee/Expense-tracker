@@ -1,3 +1,4 @@
+import 'package:expense_tracker/app_spacers.dart';
 import 'package:expense_tracker/date_range_cubit.dart';
 import 'package:expense_tracker/expense_category.dart';
 import 'package:expense_tracker/filter_by_date.dart';
@@ -51,7 +52,7 @@ class _ExpensesPage extends StatelessWidget {
                 }
                 return Column(
                   children: [
-                    const SizedBox(height: 35),
+                    AppSpacers.h35,
                     Expanded(child: BuildPieChart(dataMap: expensesSum)),
                     FilterByDate(cubit: cubit),
                     Expanded(
@@ -116,7 +117,9 @@ class BuildPieChart extends StatelessWidget {
   }
 
   PieChartSectionData chartSections(
-      MapEntry<String, double> entry, double totalValue) {
+    MapEntry<String, double> entry,
+    double totalValue,
+  ) {
     return PieChartSectionData(
       value: entry.value,
       title: '${((entry.value / totalValue) * 100).toStringAsFixed(0)}%',
@@ -150,10 +153,7 @@ class _Badge extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         shape: BoxShape.circle,
-        border: Border.all(
-          color: expense.color,
-          width: 2,
-        ),
+        border: Border.all(color: expense.color, width: 2),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(.5),
@@ -163,10 +163,7 @@ class _Badge extends StatelessWidget {
         ],
       ),
       child: Center(
-        child: Icon(
-          expense.icon,
-          color: Colors.black,
-        ),
+        child: Icon(expense.icon, color: Colors.black),
       ),
     );
   }

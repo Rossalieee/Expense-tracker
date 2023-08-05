@@ -1,9 +1,9 @@
-import 'package:expense_tracker/add_edit_transaction_page/add_transaction_page.dart';
-import 'package:expense_tracker/expenses_page.dart';
-import 'package:expense_tracker/goals_page.dart';
-import 'package:expense_tracker/home_page.dart';
-import 'package:expense_tracker/root_page/bloc/root_page_cubit.dart';
-import 'package:expense_tracker/settings_page.dart';
+import 'package:expense_tracker/pages/add_edit_transaction_page/add_transaction_page.dart';
+import 'package:expense_tracker/pages/expenses_page.dart';
+import 'package:expense_tracker/pages/goals_page.dart';
+import 'package:expense_tracker/pages/home_page.dart';
+import 'package:expense_tracker/pages/root_page/bloc/root_page_cubit.dart';
+import 'package:expense_tracker/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -24,7 +24,7 @@ class _RootPage extends StatelessWidget {
 
   final List<Widget> pages = [
     const HomePage(),
-    ExpensesPage(),
+    const ExpensesPage(),
     const AddTransactionPage(),
     const GoalsPage(),
     const SettingsPage()
