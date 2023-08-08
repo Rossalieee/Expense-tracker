@@ -4,33 +4,33 @@
   "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
   "entities": [
     {
-      "id": "1:8550733673308306879",
-      "lastPropertyId": "5:9043386527295062424",
+      "id": "1:7942291714517350585",
+      "lastPropertyId": "5:1745586917106841620",
       "name": "GoalModel",
       "properties": [
         {
-          "id": "1:1239710488944263411",
+          "id": "1:5772367034912775470",
           "name": "id",
           "type": 6,
           "flags": 1
         },
         {
-          "id": "2:8698179771045358726",
+          "id": "2:7673169609815322491",
           "name": "description",
           "type": 9
         },
         {
-          "id": "3:7558490125261862699",
+          "id": "3:4945976940999586299",
           "name": "goalAmount",
           "type": 8
         },
         {
-          "id": "4:6210739417812619008",
+          "id": "4:1094044657349742824",
           "name": "collectedAmount",
           "type": 8
         },
         {
-          "id": "5:9043386527295062424",
+          "id": "5:1745586917106841620",
           "name": "isFinished",
           "type": 1
         }
@@ -38,48 +38,48 @@
       "relations": []
     },
     {
-      "id": "2:1598254539492916683",
-      "lastPropertyId": "8:5988478730071055038",
+      "id": "2:6701883210669082914",
+      "lastPropertyId": "8:3200511153597468063",
       "name": "TransactionModel",
       "properties": [
         {
-          "id": "1:5083348339793682671",
+          "id": "1:718125050243663303",
           "name": "id",
           "type": 6,
           "flags": 1
         },
         {
-          "id": "2:7895187768767472537",
+          "id": "2:8502857634485860928",
           "name": "title",
           "type": 9
         },
         {
-          "id": "3:8580213188459109409",
-          "name": "description",
-          "type": 9
-        },
-        {
-          "id": "4:7916684550439223458",
+          "id": "3:3293204826576456140",
           "name": "amount",
           "type": 8
         },
         {
-          "id": "5:5791306281848256424",
+          "id": "4:3979541094211847994",
           "name": "date",
           "type": 10
         },
         {
-          "id": "6:1831328704194144673",
+          "id": "5:5928942263490249855",
+          "name": "type",
+          "type": 9
+        },
+        {
+          "id": "6:4860043557034816361",
           "name": "photo",
           "type": 9
         },
         {
-          "id": "7:6037264611782221932",
-          "name": "isIncome",
-          "type": 1
+          "id": "7:5677795269952841157",
+          "name": "description",
+          "type": 9
         },
         {
-          "id": "8:5988478730071055038",
+          "id": "8:3200511153597468063",
           "name": "expenseCategory",
           "type": 9
         }
@@ -87,7 +87,7 @@
       "relations": []
     }
   ],
-  "lastEntityId": "2:1598254539492916683",
+  "lastEntityId": "2:6701883210669082914",
   "lastIndexId": "0:0",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",

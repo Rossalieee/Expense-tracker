@@ -2,8 +2,9 @@ import 'dart:io';
 
 import 'package:expense_tracker/app_spacers.dart';
 import 'package:expense_tracker/main.dart';
-import 'package:expense_tracker/models/transaction.dart';
-import 'package:expense_tracker/pages/add_edit_transaction_page/edit_transaction_page.dart';
+import 'package:expense_tracker/models/transaction_model.dart';
+import 'package:expense_tracker/models/transaction_type.dart';
+import 'package:expense_tracker/pages/add_edit_transaction_page/add_transaction_page.dart';
 import 'package:expense_tracker/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -15,7 +16,9 @@ class TransactionDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formattedAmount = transaction.isIncome
+    final isIncome =
+        TransactionType.fromString(transaction.type) == TransactionType.income;
+    final formattedAmount = isIncome
         ? '+ ${transaction.amount.toStringAsFixed(2)}'
         : '- ${transaction.amount.toStringAsFixed(2)}';
 
@@ -27,14 +30,12 @@ class TransactionDetailsPage extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute<dynamic>(
-                  builder: (BuildContext context) {
-                    return EditTransactionPage(
-                      transaction: transaction,
-                    );
-                  },
+              MaterialPageRoute<void>(
+                builder: (_) => AddTransactionPage(
+                  transaction: transaction,
                 ),
               ),
+            ),
             icon: const Icon(Icons.edit),
           ),
           IconButton(
@@ -45,7 +46,7 @@ class TransactionDetailsPage extends StatelessWidget {
                 content: const Text(
                   'Are you sure you want to delete this transaction?',
                 ),
-                actions: <Widget>[
+                actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context, 'Cancel'),
                     child: const Text('Cancel'),
@@ -91,7 +92,7 @@ class TransactionDetailsPage extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: transaction.isIncome ? Colors.green : Colors.red,
+                  color: isIncome ? Colors.green : Colors.red,
                 ),
               ),
               AppSpacers.h8,
@@ -107,7 +108,8 @@ class TransactionDetailsPage extends StatelessWidget {
                 Container(
                   alignment: Alignment.center,
                   height: 240,
-                  child: ClipRRect(borderRadius: BorderRadius.circular(6),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
                     child: Image.file(
                       File(transaction.photo!),
                       fit: BoxFit.fill,

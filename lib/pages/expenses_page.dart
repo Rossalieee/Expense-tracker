@@ -1,8 +1,9 @@
 import 'package:expense_tracker/app_spacers.dart';
 import 'package:expense_tracker/date_range_cubit.dart';
-import 'package:expense_tracker/expense_category.dart';
 import 'package:expense_tracker/filter_by_date.dart';
 import 'package:expense_tracker/main.dart';
+import 'package:expense_tracker/models/expense_category.dart';
+import 'package:expense_tracker/models/transaction_type.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -44,7 +45,8 @@ class _ExpensesPage extends StatelessWidget {
                 }
                 final transactions = snapshot.data!;
                 for (final transaction in transactions) {
-                  if (!transaction.isIncome) {
+                  if (TransactionType.fromString(transaction.type) ==
+                      TransactionType.expense) {
                     expensesSum[transaction.expenseCategory!] =
                         expensesSum[transaction.expenseCategory]! +
                             transaction.amount;
@@ -53,30 +55,9 @@ class _ExpensesPage extends StatelessWidget {
                 return Column(
                   children: [
                     AppSpacers.h35,
-                    Expanded(child: BuildPieChart(dataMap: expensesSum)),
+                    Expanded(child: ExpensePieChart(dataMap: expensesSum)),
                     FilterByDate(cubit: cubit),
-                    Expanded(
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: ExpenseCategory.values.length,
-                        itemBuilder: (context, index) {
-                          final expense = ExpenseCategory.values[index];
-                          final expenseTotal = expensesSum[expense.name];
-                          final expenseIcon = Icon(expense.icon);
-                          return ListTile(
-                            leading: expenseIcon,
-                            title: Text(expense.name),
-                            trailing: Text(
-                              expenseTotal!.toStringAsFixed(2),
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                    _ExpensesList(expensesSum: expensesSum),
                   ],
                 );
               } else if (snapshot.hasError) {
@@ -92,8 +73,42 @@ class _ExpensesPage extends StatelessWidget {
   }
 }
 
-class BuildPieChart extends StatelessWidget {
-  const BuildPieChart({
+class _ExpensesList extends StatelessWidget {
+  const _ExpensesList({
+    required this.expensesSum,
+  });
+
+  final Map<String, double> expensesSum;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: ExpenseCategory.values.length,
+        itemBuilder: (context, index) {
+          final expense = ExpenseCategory.values[index];
+          final expenseTotal = expensesSum[expense.name];
+          final expenseIcon = Icon(expense.icon);
+          return ListTile(
+            leading: expenseIcon,
+            title: Text(expense.name),
+            trailing: Text(
+              expenseTotal!.toStringAsFixed(2),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class ExpensePieChart extends StatelessWidget {
+  const ExpensePieChart({
     required this.dataMap,
     super.key,
   });

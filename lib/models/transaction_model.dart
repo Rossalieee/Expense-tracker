@@ -2,12 +2,11 @@ import 'package:objectbox/objectbox.dart';
 
 @Entity()
 class TransactionModel {
-
   TransactionModel({
     required this.title,
     required this.amount,
     required this.date,
-    required this.isIncome,
+    required this.type,
     this.id = 0,
     this.description,
     this.photo,
@@ -19,7 +18,7 @@ class TransactionModel {
   String title;
   double amount;
   DateTime date;
-  bool isIncome;
+  String type;
   String? photo;
   String? description;
   String? expenseCategory;

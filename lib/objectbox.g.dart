@@ -15,39 +15,39 @@ import 'package:objectbox/objectbox.dart';
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
 import 'models/goal.dart';
-import 'models/transaction.dart';
+import 'models/transaction_model.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
 
 final _entities = <ModelEntity>[
   ModelEntity(
-      id: const IdUid(1, 8550733673308306879),
+      id: const IdUid(1, 7942291714517350585),
       name: 'GoalModel',
-      lastPropertyId: const IdUid(5, 9043386527295062424),
+      lastPropertyId: const IdUid(5, 1745586917106841620),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
-            id: const IdUid(1, 1239710488944263411),
+            id: const IdUid(1, 5772367034912775470),
             name: 'id',
             type: 6,
             flags: 1),
         ModelProperty(
-            id: const IdUid(2, 8698179771045358726),
+            id: const IdUid(2, 7673169609815322491),
             name: 'description',
             type: 9,
             flags: 0),
         ModelProperty(
-            id: const IdUid(3, 7558490125261862699),
+            id: const IdUid(3, 4945976940999586299),
             name: 'goalAmount',
             type: 8,
             flags: 0),
         ModelProperty(
-            id: const IdUid(4, 6210739417812619008),
+            id: const IdUid(4, 1094044657349742824),
             name: 'collectedAmount',
             type: 8,
             flags: 0),
         ModelProperty(
-            id: const IdUid(5, 9043386527295062424),
+            id: const IdUid(5, 1745586917106841620),
             name: 'isFinished',
             type: 1,
             flags: 0)
@@ -55,48 +55,48 @@ final _entities = <ModelEntity>[
       relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[]),
   ModelEntity(
-      id: const IdUid(2, 1598254539492916683),
+      id: const IdUid(2, 6701883210669082914),
       name: 'TransactionModel',
-      lastPropertyId: const IdUid(8, 5988478730071055038),
+      lastPropertyId: const IdUid(8, 3200511153597468063),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
-            id: const IdUid(1, 5083348339793682671),
+            id: const IdUid(1, 718125050243663303),
             name: 'id',
             type: 6,
             flags: 1),
         ModelProperty(
-            id: const IdUid(2, 7895187768767472537),
+            id: const IdUid(2, 8502857634485860928),
             name: 'title',
             type: 9,
             flags: 0),
         ModelProperty(
-            id: const IdUid(3, 8580213188459109409),
-            name: 'description',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(4, 7916684550439223458),
+            id: const IdUid(3, 3293204826576456140),
             name: 'amount',
             type: 8,
             flags: 0),
         ModelProperty(
-            id: const IdUid(5, 5791306281848256424),
+            id: const IdUid(4, 3979541094211847994),
             name: 'date',
             type: 10,
             flags: 0),
         ModelProperty(
-            id: const IdUid(6, 1831328704194144673),
+            id: const IdUid(5, 5928942263490249855),
+            name: 'type',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(6, 4860043557034816361),
             name: 'photo',
             type: 9,
             flags: 0),
         ModelProperty(
-            id: const IdUid(7, 6037264611782221932),
-            name: 'isIncome',
-            type: 1,
+            id: const IdUid(7, 5677795269952841157),
+            name: 'description',
+            type: 9,
             flags: 0),
         ModelProperty(
-            id: const IdUid(8, 5988478730071055038),
+            id: const IdUid(8, 3200511153597468063),
             name: 'expenseCategory',
             type: 9,
             flags: 0)
@@ -125,7 +125,7 @@ Future<Store> openStore(
 ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
-      lastEntityId: const IdUid(2, 1598254539492916683),
+      lastEntityId: const IdUid(2, 6701883210669082914),
       lastIndexId: const IdUid(0, 0),
       lastRelationId: const IdUid(0, 0),
       lastSequenceId: const IdUid(0, 0),
@@ -184,22 +184,23 @@ ModelDefinition getObjectBoxModel() {
         },
         objectToFB: (TransactionModel object, fb.Builder fbb) {
           final titleOffset = fbb.writeString(object.title);
+          final typeOffset = fbb.writeString(object.type);
+          final photoOffset =
+              object.photo == null ? null : fbb.writeString(object.photo!);
           final descriptionOffset = object.description == null
               ? null
               : fbb.writeString(object.description!);
-          final photoOffset =
-              object.photo == null ? null : fbb.writeString(object.photo!);
           final expenseCategoryOffset = object.expenseCategory == null
               ? null
               : fbb.writeString(object.expenseCategory!);
           fbb.startTable(9);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, titleOffset);
-          fbb.addOffset(2, descriptionOffset);
-          fbb.addFloat64(3, object.amount);
-          fbb.addInt64(4, object.date.millisecondsSinceEpoch);
+          fbb.addFloat64(2, object.amount);
+          fbb.addInt64(3, object.date.millisecondsSinceEpoch);
+          fbb.addOffset(4, typeOffset);
           fbb.addOffset(5, photoOffset);
-          fbb.addBool(6, object.isIncome);
+          fbb.addOffset(6, descriptionOffset);
           fbb.addOffset(7, expenseCategoryOffset);
           fbb.finish(fbb.endTable());
           return object.id;
@@ -212,14 +213,14 @@ ModelDefinition getObjectBoxModel() {
               title: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 6, ''),
               amount:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 10, 0),
+                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 8, 0),
               date: DateTime.fromMillisecondsSinceEpoch(
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0)),
-              isIncome: const fb.BoolReader()
-                  .vTableGet(buffer, rootOffset, 16, false),
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0)),
+              type: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 12, ''),
               id: const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0),
               description: const fb.StringReader(asciiOptimization: true)
-                  .vTableGetNullable(buffer, rootOffset, 8),
+                  .vTableGetNullable(buffer, rootOffset, 16),
               photo: const fb.StringReader(asciiOptimization: true)
                   .vTableGetNullable(buffer, rootOffset, 14),
               expenseCategory: const fb.StringReader(asciiOptimization: true)
@@ -264,25 +265,25 @@ class TransactionModel_ {
   static final title =
       QueryStringProperty<TransactionModel>(_entities[1].properties[1]);
 
-  /// see [TransactionModel.description]
-  static final description =
-      QueryStringProperty<TransactionModel>(_entities[1].properties[2]);
-
   /// see [TransactionModel.amount]
   static final amount =
-      QueryDoubleProperty<TransactionModel>(_entities[1].properties[3]);
+      QueryDoubleProperty<TransactionModel>(_entities[1].properties[2]);
 
   /// see [TransactionModel.date]
   static final date =
-      QueryIntegerProperty<TransactionModel>(_entities[1].properties[4]);
+      QueryIntegerProperty<TransactionModel>(_entities[1].properties[3]);
+
+  /// see [TransactionModel.type]
+  static final type =
+      QueryStringProperty<TransactionModel>(_entities[1].properties[4]);
 
   /// see [TransactionModel.photo]
   static final photo =
       QueryStringProperty<TransactionModel>(_entities[1].properties[5]);
 
-  /// see [TransactionModel.isIncome]
-  static final isIncome =
-      QueryBooleanProperty<TransactionModel>(_entities[1].properties[6]);
+  /// see [TransactionModel.description]
+  static final description =
+      QueryStringProperty<TransactionModel>(_entities[1].properties[6]);
 
   /// see [TransactionModel.expenseCategory]
   static final expenseCategory =

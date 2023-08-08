@@ -1,4 +1,3 @@
-import 'package:expense_tracker/app_consts.dart';
 import 'package:expense_tracker/app_spacers.dart';
 import 'package:expense_tracker/main.dart';
 import 'package:expense_tracker/validation.dart';
@@ -45,48 +44,27 @@ class _AddGoalPageState extends State<AddGoalPage> {
           key: _formKey,
           child: Column(
             children: [
-              TextFormField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Goal Description',
-                ),
-                validator: validateDescription,
-                onSaved: (newValue) => _goalDescription = newValue!,
+              _AddGoalInput(
+                label: 'Goal Description',
+                onSaved: _goalDescriptionOnSaved,
+                validator: validateGoalDescription,
               ),
               AppSpacers.h15,
-              TextFormField(
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
-                  signed: true,
-                ),
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Goal Amount',
-                ),
+              _AddGoalInput(
+                label: 'Goal Amount',
+                onSaved: _goalAmountOnSaved,
                 validator: validateAmount,
-                onSaved: (newValue) => _goalAmount = double.parse(newValue!),
-                onChanged: (value) => _goalAmount = double.parse(value),
+                onChanged: _goalAmountOnChanged,
+                isNumeric: true,
               ),
               AppSpacers.h15,
-              TextFormField(
-                initialValue: _collectedAmount.toString(),
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
-                  signed: true,
-                ),
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Collected Amount',
-                ),
-                validator: validateCollectedAmount,
-                onSaved: (newValue) {
-                  _collectedAmount = double.parse(newValue!);
-                  if (_collectedAmount == _goalAmount) {
-                    _isFinished = true;
-                  } else {
-                    _isFinished = false;
-                  }
-                },
+              _AddGoalInput(
+                label: 'Collected Amount',
+                onSaved: _collectedAmountOnSaved,
+                validator: (value) =>
+                    validateGoalCollectedAmount(value, _goalAmount),
+                isNumeric: true,
+                initialValue: '0.00',
               ),
               AppSpacers.h15,
               const ElevatedButton(
@@ -100,30 +78,59 @@ class _AddGoalPageState extends State<AddGoalPage> {
     );
   }
 
-  String? validateDescription(String? value) {
-    if (value?.isEmpty ?? true) {
-      return 'Please enter a goal description';
+  void _goalDescriptionOnSaved(String? newValue) =>
+      _goalDescription = newValue!;
+
+  void _goalAmountOnChanged(String value) => _goalAmount = double.parse(value);
+
+  void _goalAmountOnSaved(String? newValue) =>
+      _goalAmount = double.parse(newValue!);
+
+  void _collectedAmountOnSaved(String? newValue) {
+    _collectedAmount = double.parse(newValue!);
+    if (_collectedAmount == _goalAmount) {
+      _isFinished = true;
+    } else {
+      _isFinished = false;
     }
-    return null;
   }
+}
 
-  String? validateCollectedAmount(String? value) {
-    if (value?.isEmpty ?? true) {
-      return 'Please enter an amount';
-    }
+class _AddGoalInput extends StatelessWidget {
+  const _AddGoalInput({
+    required this.label,
+    required this.onSaved,
+    this.onChanged,
+    this.validator,
+    this.isNumeric = false,
+    this.initialValue,
+  });
 
-    if (value!.contains('.') && value.split('.')[1].length > 2) {
-      return 'Only two digits after the decimal point are allowed';
-    }
+  final String label;
+  final String? initialValue;
+  final bool isNumeric;
+  final void Function(String?) onSaved;
+  final void Function(String)? onChanged;
+  final String? Function(String?)? validator;
 
-    if (AppConsts.numericRegex.hasMatch(value)) {
-      return 'Invalid amount format';
-    }
-
-    if (double.parse(value) > _goalAmount) {
-      return 'Collected amount cannot be greater than goal amount';
-    }
-
-    return null;
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      initialValue: initialValue,
+      keyboardType: isNumeric
+          ? const TextInputType.numberWithOptions(
+              decimal: true,
+              signed: true,
+            )
+          : TextInputType.text,
+      decoration: InputDecoration(
+        border: const OutlineInputBorder(),
+        labelText: label,
+        contentPadding: const EdgeInsets.all(8),
+      ),
+      onSaved: onSaved,
+      onChanged: onChanged,
+      validator: validator,
+    );
   }
 }

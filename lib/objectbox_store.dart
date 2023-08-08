@@ -1,5 +1,7 @@
+import 'dart:developer';
+
 import 'package:expense_tracker/models/goal.dart';
-import 'package:expense_tracker/models/transaction.dart';
+import 'package:expense_tracker/models/transaction_model.dart';
 import 'package:expense_tracker/objectbox.g.dart'; // created by `flutter pub run build_runner build`
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -46,7 +48,7 @@ class ObjectBox {
     required String title,
     required DateTime date,
     required double amount,
-    required bool isIncome,
+    required String type,
     String? description,
     String? photo,
     String? expenseCategory,
@@ -56,7 +58,7 @@ class ObjectBox {
       description: description,
       date: date,
       amount: amount,
-      isIncome: isIncome,
+      type: type,
       expenseCategory: expenseCategory,
       photo: photo,
     );
@@ -69,7 +71,7 @@ class ObjectBox {
     required String title,
     required DateTime date,
     required double amount,
-    required bool isIncome,
+    required String type,
     String? description,
     String? photo,
     String? expenseCategory,
@@ -82,11 +84,12 @@ class ObjectBox {
         ..description = description
         ..date = date
         ..amount = amount
-        ..isIncome = isIncome
+        ..type = type
         ..expenseCategory = expenseCategory
         ..photo = photo;
 
       transactionBox.put(transaction);
+      log('Transaction $id updated');
     }
   }
 
@@ -94,8 +97,7 @@ class ObjectBox {
 
   Stream<List<GoalModel>> getAllGoals() {
     // Query for all goals.
-    final builder = goalBox.query()
-      ..order(GoalModel_.isFinished);
+    final builder = goalBox.query()..order(GoalModel_.isFinished);
     return builder.watch(triggerImmediately: true).map((query) => query.find());
   }
 
@@ -126,7 +128,7 @@ class ObjectBox {
 
     if (goal != null) {
       goal
-        ..goalAmount= goalAmount
+        ..goalAmount = goalAmount
         ..description = description
         ..collectedAmount = collectedAmount
         ..isFinished = isFinished;

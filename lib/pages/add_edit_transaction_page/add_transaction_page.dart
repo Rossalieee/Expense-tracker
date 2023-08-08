@@ -1,8 +1,9 @@
 import 'dart:io';
 
 import 'package:expense_tracker/app_spacers.dart';
-import 'package:expense_tracker/expense_category.dart';
-import 'package:expense_tracker/main.dart';
+import 'package:expense_tracker/models/expense_category.dart';
+import 'package:expense_tracker/models/transaction_model.dart';
+import 'package:expense_tracker/models/transaction_type.dart';
 import 'package:expense_tracker/pages/add_edit_transaction_page/add_transaction_state.dart';
 import 'package:expense_tracker/pages/add_edit_transaction_page/bloc/add_transaction_cubit.dart';
 import 'package:expense_tracker/pages/add_edit_transaction_page/choice_chips.dart';
@@ -13,12 +14,14 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 class AddTransactionPage extends StatelessWidget {
-  const AddTransactionPage({super.key});
+  const AddTransactionPage({super.key, this.transaction});
+
+  final TransactionModel? transaction;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => AddTransactionCubit(),
+      create: (_) => AddTransactionCubit()..initialize(transaction),
       child: _AddTransactionPage(),
     );
   }
@@ -28,7 +31,6 @@ class _AddTransactionPage extends StatelessWidget {
   _AddTransactionPage();
 
   final _formKey = GlobalKey<FormState>();
-
   final picker = ImagePicker();
 
   @override
@@ -37,34 +39,11 @@ class _AddTransactionPage extends StatelessWidget {
       builder: (context, state) {
         final cubit = context.read<AddTransactionCubit>();
 
-        var title = '';
-        var description = '';
-        var amount = 0.0;
-
-        void submitForm() {
-          if (_formKey.currentState!.validate()) {
-            _formKey.currentState!.save();
-
-            objectbox.addTransaction(
-              title: title,
-              description: description.isEmpty ? null : description,
-              amount: amount,
-              date: state.date,
-              isIncome: state.isIncome,
-              photo: state.photo,
-              expenseCategory: state.expenseCategory,
-            );
-
-            _formKey.currentState!.reset();
-
-            cubit.clearPhoto();
-          }
-        }
-
         return Scaffold(
           appBar: AppBar(
             centerTitle: true,
-            title: const Text('Add Transaction'),
+            title:
+                Text(state.editMode ? 'Edit Transaction' : 'Add Transaction'),
           ),
           body: Padding(
             padding: const EdgeInsets.all(18),
@@ -75,20 +54,25 @@ class _AddTransactionPage extends StatelessWidget {
                   AppSpacers.h5,
                   _AddTransactionInput(
                     label: 'Title',
-                    onSaved: (value) => title = value!,
+                    onSaved: cubit.setTitle,
                     validator: validateTitle,
+                    initialValue: state.title,
                   ),
                   AppSpacers.h12,
                   _AddTransactionInput(
                     label: 'Description',
-                    onSaved: (value) => description = value!,
+                    onSaved: cubit.setDescription,
+                    initialValue: state.description,
                   ),
                   AppSpacers.h12,
                   _AddTransactionInput(
                     label: 'Amount',
-                    onSaved: (value) => amount = double.parse(value!),
+                    onSaved: (value) =>
+                        cubit.setAmount(double.tryParse(value!)),
                     isNumeric: true,
                     validator: validateAmount,
+                    initialValue:
+                        state.editMode ? state.amount.toString() : null,
                   ),
                   AppSpacers.h12,
                   Center(
@@ -98,49 +82,51 @@ class _AddTransactionPage extends StatelessWidget {
                         context,
                         state,
                         null,
-                        isEditTransactionPage: false,
                       ),
                     ),
                   ),
                   AppSpacers.h5,
                   Visibility(
-                    visible: cubit.state.type == TransactionType.expense,
+                    visible: state.type == TransactionType.expense,
                     child: ExpenseCategoryDropdown(cubit: cubit),
                   ),
                   AppSpacers.h15,
                   OutlinedButton(
                     onPressed: () {
                       picker.pickImage(source: ImageSource.gallery).then(
-                            (value) => cubit.selectPhoto(value!.path),
+                            (value) => cubit.setPhoto(value?.path),
                           );
                     },
                     child: const Text('Add photo'),
                   ),
-                  if (cubit.state.photo != null)
+                  if (state.photo != null)
                     ShowPhoto(cubit: cubit)
                   else
                     AppSpacers.h0,
                   ListTile(
                     leading: const Icon(Icons.calendar_today),
                     title: const Text('Transaction Date'),
-                    subtitle: Text(DateFormat.yMMMd().format(cubit.state.date)),
+                    subtitle: Text(DateFormat.yMMMd().format(state.date)),
                     onTap: () => showDatePicker(
                       context: context,
                       initialDate: DateTime.now(),
                       firstDate: DateTime(2020),
                       lastDate: DateTime(2100),
-                    ).then(cubit.selectDate),
+                    ).then(cubit.setDate),
                   ),
                   AppSpacers.h15,
                   ElevatedButton(
-                    onPressed: submitForm,
+                    onPressed: () =>
+                        submitForm(context, editMode: state.editMode),
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(32),
                       ),
                       minimumSize: const Size(60, 45),
                     ),
-                    child: const Text('Save Transaction'),
+                    child: Text(
+                      state.editMode ? 'Save changes' : 'Save Transaction',
+                    ),
                   ),
                 ],
               ),
@@ -150,6 +136,21 @@ class _AddTransactionPage extends StatelessWidget {
       },
     );
   }
+
+  void submitForm(BuildContext context, {required bool editMode}) {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+
+      if (editMode) {
+        context.read<AddTransactionCubit>().updateTransaction();
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+      } else {
+        context.read<AddTransactionCubit>().addTransaction();
+        _formKey.currentState!.reset();
+      }
+    }
+  }
 }
 
 class _AddTransactionInput extends StatelessWidget {
@@ -158,9 +159,11 @@ class _AddTransactionInput extends StatelessWidget {
     required this.onSaved,
     this.validator,
     this.isNumeric = false,
+    this.initialValue,
   });
 
   final String label;
+  final String? initialValue;
   final bool isNumeric;
   final void Function(String?) onSaved;
   final String? Function(String?)? validator;
@@ -168,6 +171,7 @@ class _AddTransactionInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      initialValue: initialValue,
       keyboardType: isNumeric
           ? const TextInputType.numberWithOptions(
               decimal: true,

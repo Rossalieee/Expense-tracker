@@ -6,10 +6,8 @@ import 'package:expense_tracker/pages/root_page/bloc/root_page_cubit.dart';
 import 'package:expense_tracker/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 class RootPage extends StatelessWidget {
   const RootPage({super.key});
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -18,10 +16,8 @@ class RootPage extends StatelessWidget {
     );
   }
 }
-
 class _RootPage extends StatelessWidget {
   _RootPage();
-
   final List<Widget> pages = [
     const HomePage(),
     const ExpensesPage(),
@@ -29,13 +25,11 @@ class _RootPage extends StatelessWidget {
     const GoalsPage(),
     const SettingsPage()
   ];
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<RootPageCubit, RootPageState>(
       builder: (context, state) {
         final currentPage = state.currentPage;
-
         return Scaffold(
           body: pages[currentPage],
           bottomNavigationBar: NavigationBar(
