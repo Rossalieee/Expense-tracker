@@ -14,7 +14,7 @@ Expense Tracker is a powerful and intuitive Flutter application that allows user
 
 ![Uploading edit_transaction.gif…]()
 
-![delete_transaction](https://github.com/Rossalieee/Expense-tracker/assets/107406800/3d65982a-66d6-4c56-b9f7-db271d012979)
+![delete_transaction|320x271,50%](https://github.com/Rossalieee/Expense-tracker/assets/107406800/3d65982a-66d6-4c56-b9f7-db271d012979)
 
 ![Uploading expenses_page.gif…]()
 
