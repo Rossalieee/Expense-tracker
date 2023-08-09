@@ -9,3 +9,4 @@ Expense Tracker is a powerful and intuitive Flutter application that allows user
 * **Financial Goals**: Set your financial goals and monitor your progress in achieving them. 
 * **Secure Data Storage**: The app uses ObjectBox, a reliable and efficient database, to securely store your financial information locally on your device.
 
+<img src="https://github.com/Rossalieee/Expense-tracker/assets/107406800/674af9a9-ad0b-458d-8a37-c39f228efa1d" width="50%" height="50%"/>
